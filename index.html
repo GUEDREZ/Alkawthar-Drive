@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page_title">الكَوثر درايف – VTC الجزائر | خدمة نقل خاصة راقية</title>
+
+    <!-- FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Poppins:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- STYLES -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+    <!-- INTL TEL INPUT -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/css/intlTelInput.css" />
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- ================= SWITCH MODE & LANGUE ================= -->
+    <div class="top-bar-controls">
+        <div class="switch-wrapper"
+            style="display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: auto;">
+            <span style="color: #ffd700; font-weight: bold; font-size: 0.9rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);"
+                data-i18n="join_team">انضم إلى فريقنا</span>
+            <div class="switch-mode">
+                <button onclick="switchMode('client')" class="active-mode" data-i18n="mode_client">👤 زبون</button>
+                <button onclick="switchMode('chauffeur')" data-i18n="mode_driver">🚖 سائق</button>
+            </div>
+        </div>
+
+        <div class="lang-select">
+            <select id="langSelect">
+                <option value="ar">�🇿 العربية</option>
+                <option value="fr">�🇫🇷 Français</option>
+                <option value="en">🇬🇧 English</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- ================= HEADER HERO ================= -->
+    <header class="hero-header">
+        <div class="hero-overlay">
+            <div class="hero-content">
+
+                <!-- LOGO -->
+                <div class="hero-logo">
+                    <img src="assets/img/Logo.png" alt="Alkawthar Drive Logo" class="logo-img">
+                </div>
+
+                <!-- TEXTE HERO -->
+                <div class="hero-text animated-fade-up">
+                    <h1 data-i18n="hero_title">ALKawthar Drive</h1>
+                    <h2 data-i18n="hero_subtitle">الكوثر للنقل الخاص</h2>
+                    <div class="hero-slogans">
+                        <p data-i18n="hero_slogan1">✨ قيادة بثقة، وصول بسلام</p>
+                        <p data-i18n="hero_slogan2">💎 راحة وأمان في كل رحلة</p>
+                    </div>
+
+                    <p class="hero-highlight" data-i18n="hero_highlight">قريباً.. تغطية شاملة لكافة التراب الوطني</p>
+
+                    <p class="hero-desc" data-i18n="hero_desc">
+                        اختاروا الأمان والراحة مع سائقينا المحترفين.
+                        سيارات فاخرة ومجهزة لجميع تنقلاتكم: العائلة، العمل، المطارات، والأعراس.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a href="#form-map-container" class="btn-primary" data-i18n="btn_book">📅 احجز الآن</a>
+                        <a href="https://wa.me/0033766074322" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i>
+                            <span data-i18n="btn_whatsapp">WhatsApp</span></a>
+                        <a href="tel:+213660657869" class="btn-call"><i class="fa-solid fa-phone"></i> <span
+                                data-i18n="btn_call">اتصل بنا</span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= SLIDER IMAGES ================= -->
+    <div class="slider-container">
+        <div class="slider-track">
+            <img src="assets/img/slide1.jpg" alt="Kawthar Drive 1">
+            <img src="assets/img/slide2.jpg" alt="Kawthar Drive 2">
+            <img src="assets/img/slide3.jpg" alt="Kawthar Drive 3">
+            <img src="assets/img/slide4.jpg" alt="Kawthar Drive 4">
+            <img src="assets/img/slide5.jpg" alt="Kawthar Drive 5">
+            <img src="assets/img/slide6.jpg" alt="Kawthar Drive 6">
+            <img src="assets/img/slide7.jpg" alt="Kawthar Drive 7">
+            <img src="assets/img/slide8.jpg" alt="Kawthar Drive 8">
+            <img src="assets/img/slidebis3.png" alt="Kawthar Drive">
+
+            <!-- DUPLICATION pour boucle -->
+            <img src="assets/img/slide1.jpg" alt="">
+            <img src="assets/img/slide2.jpg" alt="">
+            <img src="assets/img/slide3.jpg" alt="">
+            <img src="assets/img/slide4.jpg" alt="">
+            <img src="assets/img/slide5.jpg" alt="">
+            <img src="assets/img/slide6.jpg" alt="">
+            <img src="assets/img/slide7.jpg" alt="">
+            <img src="assets/img/slide8.jpg" alt="">
+        </div>
+    </div>
+
+    <!-- ================= MESSAGE DE CONFIANCE ================= -->
+    <section class="trust-message animated-section">
+        <div class="container">
+            <i class="fa-solid fa-shield-halved fa-3x" style="color: #ffd700; margin-bottom: 15px;"></i>
+            <p data-i18n="trust_text">
+                في <strong>Alkawthar Drive</strong>، نلتزم بتقديم أعلى معايير الجودة والأمان.
+                سائقون محترفون، سيارات حديثة، وخدمة عملاء استثنائية.
+                <span>رحلتك تبدأ من هنا.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- ================= FORMULAIRE + MAP ================= -->
+    <section id="form-map-container">
+
+        <div class="formulaire-wrapper animated-slide-right">
+            <div class="formulaire">
+                <div class="form-header">
+                    <h3 data-i18n="form_title">احجز رحلتك / Réserver</h3>
+                    <p data-i18n="form_subtitle">املأ الاستمارة وسنتصل بك فوراً</p>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-earth-africa"></i> <span data-i18n="label_country">الدولة /
+                            Pays</span></label>
+                    <select id="country">
+                        <optgroup label="Afrique (أفريقيا)">
+                            <option value="dz" selected>🇩🇿 Algérie (الجزائر)</option>
+                            <option value="tn">🇹🇳 Tunisie (تونس)</option>
+                            <option value="ma">🇲🇦 Maroc (المغرب)</option>
+                            <option value="eg">🇪🇬 Égypte (مصر)</option>
+                            <option value="ly">🇱🇾 Libye (ليبيا)</option>
+                            <option value="sn">🇸🇳 Sénégal (السنغال)</option>
+                            <option value="ci">🇨🇮 Côte d'Ivoire (ساحل العاج)</option>
+                            <option value="za">🇿🇦 Afrique du Sud (جنوب أفريقيا)</option>
+                        </optgroup>
+                        <optgroup label="Moyen-Orient (الشرق الأوسط)">
+                            <option value="sa">🇸🇦 Arabie Saoudite (السعودية)</option>
+                            <option value="ae">🇦🇪 Émirats (الإمارات)</option>
+                            <option value="qa">🇶🇦 Qatar (قطر)</option>
+                            <option value="kw">🇰🇼 Koweït (الكويت)</option>
+                            <option value="jo">🇯🇴 Jordanie (الأردن)</option>
+                        </optgroup>
+                        <optgroup label="Europe (أوروبا)">
+                            <option value="fr">🇫🇷 France (فرنسا)</option>
+                            <option value="de">🇩🇪 Allemagne (ألمانيا)</option>
+                            <option value="es">🇪🇸 Espagne (إسبانيا)</option>
+                            <option value="it">🇮🇹 Italie (إيطاليا)</option>
+                            <option value="uk">🇬🇧 Royaume-Uni (بريطانيا)</option>
+                        </optgroup>
+                        <optgroup label="Asie (آسيا)">
+                            <option value="tr">🇹🇷 Turquie (تركيا)</option>
+                            <option value="my">🇲🇾 Malaisie (ماليزيا)</option>
+                            <option value="id">🇮🇩 Indonésie (إندونيسيا)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_name">الاسم الكامل</label>
+                        <input type="text" id="nom" placeholder="Votre nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_phone">رقم الهاتف</label>
+                        <input type="tel" id="telephone" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="label_email">البريد الإلكتروني</label>
+                    <input type="email" id="email" placeholder="email@example.com">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_start">الانطلاق</label>
+                        <input type="text" id="start" placeholder="Départ">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_end">الوصول</label>
+                        <input type="text" id="end" placeholder="Arrivée">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_date">التاريخ</label>
+                        <input type="datetime-local" id="date">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_passengers">الركاب</label>
+                        <select id="passagers">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="calculate" class="btn-action" data-i18n="btn_calculate">🧮 حساب السعر / Calculer</button>
+
+                <div id="trip-info">
+                    <div class="info-item">
+                        <span data-i18n="info_distance">المسافة</span>
+                        <strong id="distance">—</strong>
+                    </div>
+                    <div class="info-item">
+                        <span data-i18n="info_duration">المدة</span>
+                        <strong id="duree">—</strong>
+                    </div>
+                    <div class="info-item price">
+                        <span data-i18n="info_price">السعر التقديري</span>
+                        <strong id="prix-affiche">—</strong>
+                    </div>
+                </div>
+
+                <button id="reserver" class="btn-action btn-confirm" data-i18n="btn_confirm">✅ تأكيد الحجز /
+                    Réserver</button>
+
+                <!-- Options de paiement -->
+                <div class="payment-options">
+                    <button class="btn-payment btn-paypal" id="payer-paypal"><i class="fa-brands fa-paypal"></i>
+                        PayPal</button>
+                    <button class="btn-payment btn-edahabia" id="payer-stripe"><i class="fa-regular fa-credit-card"></i>
+                        <span data-i18n="btn_edahabia">البطاقة الذهبية</span></button>
+                    <button class="btn-payment btn-cash"><i class="fa-solid fa-money-bill-wave"></i> <span
+                            data-i18n="btn_cash">Espèces</span></button>
+                </div>
+
+                <div id="paypal-section">
+                    <div id="paypal-button-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="map" class="animated-slide-left"></div>
+
+    </section>
+
+    <!-- ================= SERVICES ================= -->
+    <section id="services-section" class="animated-section">
+        <h2 data-i18n="services_title">خدماتنا المتميزة</h2>
+        <p class="section-subtitle" data-i18n="services_subtitle">نقدم لكم تجربة نقل لا تنسى</p>
+
+        <div class="services-container">
+            <div class="service-box">
+                <div class="icon-box"><i class="fa-solid fa-plane-departure"></i></div>
+                <h3 data-i18n="service_airport_title">نقل المطار</h3>
+                <p data-i18n="service_airport_desc">استقبال وتوديع في جميع المطارات بدقة وموثوقية.</p>
+            </div>
+            <div class="service-box">
+                <div class="icon-box"><i class="fa-solid fa-business-time"></i></div>
+                <h3 data-i18n="service_business_title">رجال الأعمال</h3>
+                <p data-i18n="service_business_desc">سيارات فخمة لتنقلاتكم المهنية والاجتماعات.</p>
+            </div>
+            <div class="service-box">
+                <div class="icon-box"><i class="fa-solid fa-ring"></i></div>
+                <h3 data-i18n="service_wedding_title">الأعراس والمناسبات</h3>
+                <p data-i18n="service_wedding_desc">موكب سيارات فاخر لليلة العمر والمناسبات الخاصة.</p>
+            </div>
+            <div class="service-box">
+                <div class="icon-box"><i class="fa-solid fa-map-location-dot"></i></div>
+                <h3 data-i18n="service_tour_title">رحلات سياحية</h3>
+                <p data-i18n="service_tour_desc">اكتشف جمال الجزائر مع سائقين عارفين بالطرق.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= VÉHICULES ================= -->
+    <section id="vehicules" class="animated-section">
+        <h2 data-i18n="fleet_title">أسطولنا الفاخر</h2>
+        <p class="section-subtitle" data-i18n="fleet_subtitle">سيارات حديثة ومريحة لجميع احتياجاتكم</p>
+
+        <div class="vehicules-container">
+            <div class="vehicule-box">
+                <img src="assets/img/slidebis2.png" class="vehicule-img" alt="Berline Standard">
+                <div class="vehicule-info">
+                    <h3 data-i18n="vehicle_standard_title">Berline Confort</h3>
+                    <p data-i18n="vehicle_standard_desc">اقتصادي ومريح</p>
+                </div>
+            </div>
+            <div class="vehicule-box">
+                <img src="assets/img/slidebis.png" class="vehicule-img" alt="Berline Luxe">
+                <div class="vehicule-info">
+                    <h3 data-i18n="vehicle_luxe_title">Berline classique</h3>
+                    <p data-i18n="vehicle_luxe_desc">رجال الأعمال والفخامة</p>
+                </div>
+            </div>
+            <div class="vehicule-box">
+                <img src="assets/img/slidebis1.png" class="vehicule-img" alt="Van VIP">
+                <div class="vehicule-info">
+                    <h3 data-i18n="vehicle_van_title">Van VIP</h3>
+                    <p data-i18n="vehicle_van_desc">عائلي ومجموعات</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= VILLES ================= -->
+    <section id="villes">
+        <h2 data-i18n="areas_title">مناطق الخدمة</h2>
+        <ul class="villes-grid">
+            <li>الجزائر العاصمة</li>
+            <li>وهران</li>
+            <li>قسنطينة</li>
+            <li>عنابة</li>
+            <li>سطيف</li>
+            <li>تلمسان</li>
+            <li>بجاية</li>
+            <li>تيزي وزو</li>
+            <li>غرداية</li>
+            <li>بسكرة</li>
+            <li>ورقلة</li>
+
+        </ul>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 <strong>ALKawthar Drive</strong>. <span data-i18n="footer_rights">جميع الحقوق محفوظة.</span></p>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/intlTelInput.min.js"></script>
+    <script
+        src="https://www.paypal.com/sdk/js?client-id=AeQQmaBFb_v25ReUl5UVEoxmJYWeJ7hsGzyi2kF2yOdiMtqGxNpxydZClqnZ4uAJ3t9ETtbGdf6kCpoP&currency=EUR"></script>
+    <script src="assets/js/scripts.js"></script>
+    <!-- GOOGLE MAPS API -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmZidnFyW3OQ6_WvVJUluXODV-pxnPdfg&libraries=places&callback=initMap"
+        async defer></script>
+
+</body>
+
+</html>

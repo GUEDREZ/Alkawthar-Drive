@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل السائق - Alkawthar Drive</title>
+
+  <!-- CSS PRINCIPAL -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<div class="chauffeur-container">
+  <h2>🚖 تسجيل سائق - Alkawthar Drive</h2>
+
+  <form id="chauffeurForm" enctype="multipart/form-data">
+
+    <label>الاسم واللقب</label>
+    <input type="text" name="nom" id="ch-nom" required placeholder="أدخل الاسم الكامل">
+
+    <label>رقم الهاتف</label>
+    <input type="tel" name="telephone" id="ch-telephone" required placeholder="مثال: 0555xxxxxx">
+
+    <label>📷 صورة السائق</label>
+    <input type="file" name="photo" id="ch-photo" accept="image/*" capture="camera" required>
+
+    <label>📄 صورة بطاقة الرمادية (Carte Grise)</label>
+    <input type="file" name="carteGrise" id="ch-carte-grise" accept="image/*,application/pdf" required>
+
+    <label>📄 صورة التأمين ساري المفعول</label>
+    <input type="file" name="assurance" id="ch-assurance" accept="image/*,application/pdf" required>
+
+    <label>🚗 صورة المركبة (مع لوحة الترقيم واضحة)</label>
+    <input type="file" name="vehicule" id="ch-vehicule" accept="image/*" capture="camera" required>
+
+    <button type="submit" id="submitBtn">✅ إرسال طلب التسجيل</button>
+
+  </form>
+
+  <br>
+  <button onclick="window.location.href='index.html'">⬅️ العودة إلى صفحة الزبون</button>
+</div>
+
+<!-- ================== SCRIPT BACKEND ================== -->
+<script>
+document.getElementById("chauffeurForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "⏳ جاري الإرسال...";
+
+  const formData = new FormData(this);
+
+  try {
+    const response = await fetch('http://localhost:3000/api/chauffeur', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert("✅ تم إرسال ملف السائق بنجاح!");
+      document.getElementById("chauffeurForm").reset();
+    } else {
+      alert("❌ حدث خطأ أثناء الإرسال: " + (result.error || "Unknown error"));
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("❌ تعذر الاتصال بالخادم. تأكد من تشغيل الخادم.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "✅ إرسال طلب التسجيل";
+  }
+});
+</script>
+
+</body>
+</html>
