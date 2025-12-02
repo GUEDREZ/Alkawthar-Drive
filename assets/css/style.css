@@ -50,12 +50,11 @@ h6 {
   font-weight: 700;
 }
 
-/* --- TOP BAR CONTROLS (Switch Mode Only) --- */
+/* --- TOP BAR CONTROLS (Top Right Position) --- */
 .top-bar-controls {
   position: fixed;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 20px;
+  right: 20px;
   z-index: 1000;
   pointer-events: auto;
 }
@@ -63,25 +62,34 @@ h6 {
 .switch-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
+}
+
+.join-team-text {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
 }
 
 .switch-mode {
   display: flex;
   gap: 8px;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 6px;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 8px 12px;
   border-radius: 30px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .switch-mode button {
   background: transparent;
   border: none;
   color: #fff;
-  padding: 10px 18px;
+  padding: 10px 20px;
   border-radius: 25px;
   font-family: var(--font-arabic);
   font-weight: 700;
@@ -94,36 +102,56 @@ h6 {
 .switch-mode button:hover {
   background: var(--accent-gold);
   color: #000;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.5);
   transform: scale(1.05);
 }
 
-/* --- HERO HEADER --- */
+/* --- HERO HEADER (Redesigned avec logo à gauche) --- */
 .hero-header {
   position: relative;
-  height: 85vh;
-  min-height: 600px;
+  height: 90vh;
+  min-height: 650px;
   background: url('../img/header-bg.png') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Eclaircissement du fond demandé */
-  filter: brightness(1.1);
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 51, 51, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+  /* Fond plus clair comme demandé */
+  background: linear-gradient(135deg, rgba(0, 51, 51, 0.5) 0%, rgba(0, 0, 0, 0.3) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+}
+
+/* Logo positionné en haut à gauche */
+.hero-logo-left {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  animation: fadeInLeft 1s ease-out;
+}
+
+.hero-logo-left .logo-img {
+  max-width: 180px;
+  height: auto;
+  filter: drop-shadow(0 4px 15px rgba(212, 175, 55, 0.5));
+  transition: transform 0.3s ease;
+}
+
+.hero-logo-left .logo-img:hover {
+  transform: scale(1.05);
 }
 
 .hero-content {
   text-align: center;
   max-width: 900px;
-  padding: 20px;
+  padding: 40px 20px;
   z-index: 2;
 }
 
@@ -758,40 +786,63 @@ footer {
 /* MOBILE PHONES */
 @media (max-width: 600px) {
 
-  /* TOP BAR MOBILE - Centré et compact */
+  /* TOP BAR MOBILE - En haut à droite compact */
   .top-bar-controls {
     top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: auto;
-    max-width: 90%;
+    right: 10px;
+    left: auto;
+    transform: none;
   }
 
   .switch-wrapper {
-    gap: 5px;
+    gap: 4px;
+    align-items: flex-end;
   }
 
-  .switch-wrapper span {
-    font-size: 0.75rem !important;
+  .join-team-text {
+    font-size: 0.7rem !important;
+    display: none;
+    /* Masqué sur mobile pour gagner de la place */
   }
 
   .switch-mode {
-    gap: 5px;
-    padding: 4px;
+    gap: 4px;
+    padding: 6px 8px;
   }
 
   .switch-mode button {
-    padding: 8px 14px;
-    font-size: 0.8rem;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  /* LOGO MOBILE - En haut à gauche compact */
+  .hero-logo-left {
+    top: 10px;
+    left: 10px;
+  }
+
+  .hero-logo-left .logo-img {
+    max-width: 100px;
+    /* Plus petit sur mobile */
   }
 
   /* HERO MOBILE */
   .hero-header {
     height: auto;
     min-height: 100vh;
-    padding-top: 90px;
-    /* Réduit pour compenser la top-bar plus petite */
+    padding-top: 80px;
+    /* Espace pour logo et boutons */
     padding-bottom: 40px;
+  }
+
+  .hero-overlay {
+    padding: 15px;
+    /* Réduction du padding sur mobile */
+  }
+
+  .hero-content {
+    padding: 20px 15px;
+    /* Contenu plus compact */
   }
 
   .hero-text h1 {
