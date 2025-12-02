@@ -23,7 +23,7 @@
 
 <body>
 
-    <!-- ================= SWITCH MODE & LANGUE ================= -->
+    <!-- ================= SWITCH MODE ================= -->
     <div class="top-bar-controls">
         <div class="switch-wrapper"
             style="display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: auto;">
@@ -33,14 +33,6 @@
                 <button onclick="switchMode('client')" class="active-mode" data-i18n="mode_client">👤 زبون</button>
                 <button onclick="switchMode('chauffeur')" data-i18n="mode_driver">🚖 سائق</button>
             </div>
-        </div>
-
-        <div class="lang-select">
-            <select id="langSelect">
-                <option value="ar">�🇿 العربية</option>
-                <option value="fr">�🇫🇷 Français</option>
-                <option value="en">🇬🇧 English</option>
-            </select>
         </div>
     </div>
 
@@ -74,7 +66,7 @@
                         <a href="#form-map-container" class="btn-primary" data-i18n="btn_book">📅 احجز الآن</a>
                         <a href="https://wa.me/0033766074322" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i>
                             <span data-i18n="btn_whatsapp">WhatsApp</span></a>
-                        <a href="tel:0033766074322" class="btn-call"><i class="fa-solid fa-phone"></i> <span
+                        <a href="tel:+213660657869" class="btn-call"><i class="fa-solid fa-phone"></i> <span
                                 data-i18n="btn_call">اتصل بنا</span></a>
                     </div>
                 </div>
@@ -323,7 +315,6 @@
             <li>غرداية</li>
             <li>بسكرة</li>
             <li>ورقلة</li>
-
         </ul>
     </section>
 
@@ -350,6 +341,5 @@
         async defer></script>
 
 </body>
-
 
 </html>
