@@ -8,6 +8,9 @@ import { fileURLToPath } from 'url';
 import FormData from 'form-data';
 import PDFDocument from 'pdfkit';
 
+// ⚠️ DÉSACTIVER VÉRIFICATION SSL (POUR DEV LOCAL SEULEMENT SI ERREUR CERTIFICAT)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 // CHECK ENV VARIABLES
 if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
   console.error("❌ ERREUR CRITIQUE: TELEGRAM_BOT_TOKEN ou TELEGRAM_CHAT_ID manquant dans le fichier .env");
@@ -94,7 +97,7 @@ async function sendTelegram(message) {
     return await response.json();
   } catch (error) {
     console.error("Error sending Telegram message:", error);
-    return { ok: false, error };
+    return { ok: false, error: error.message || error.toString() };
   }
 }
 
@@ -118,7 +121,7 @@ async function sendTelegramPhoto(caption, filePath) {
     return await response.json();
   } catch (error) {
     console.error("Error sending Telegram photo:", error);
-    return { ok: false, error };
+    return { ok: false, error: error.message || error.toString() };
   }
 }
 
@@ -142,7 +145,7 @@ async function sendTelegramDocument(caption, filePath) {
     return await response.json();
   } catch (error) {
     console.error("Error sending Telegram document:", error);
-    return { ok: false, error };
+    return { ok: false, error: error.message || error.toString() };
   }
 }
 
@@ -284,7 +287,7 @@ function cleanupFile(filePath) {
   }
 }
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log("🚀 Server running on port", PORT);
 });
