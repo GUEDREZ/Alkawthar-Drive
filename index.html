@@ -23,12 +23,10 @@
 
 <body>
 
-    <!-- ================= SWITCH MODE ================= -->
+    <!-- ================= SWITCH MODE (Top Right) ================= -->
     <div class="top-bar-controls">
-        <div class="switch-wrapper"
-            style="display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: auto;">
-            <span style="color: #ffd700; font-weight: bold; font-size: 0.9rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);"
-                data-i18n="join_team">انضم إلى فريقنا</span>
+        <div class="switch-wrapper">
+            <span class="join-team-text" data-i18n="join_team">انضم إلى فريقنا</span>
             <div class="switch-mode">
                 <button onclick="switchMode('client')" class="active-mode" data-i18n="mode_client">👤 زبون</button>
                 <button onclick="switchMode('chauffeur')" data-i18n="mode_driver">🚖 سائق</button>
@@ -39,14 +37,13 @@
     <!-- ================= HEADER HERO ================= -->
     <header class="hero-header">
         <div class="hero-overlay">
+            <!-- LOGO (Top Left) -->
+            <div class="hero-logo-left">
+                <img src="assets/img/Logo.png" alt="Alkawthar Drive Logo" class="logo-img">
+            </div>
+
+            <!-- CONTENU PRINCIPAL CENTRÉ -->
             <div class="hero-content">
-
-                <!-- LOGO -->
-                <div class="hero-logo">
-                    <img src="assets/img/Logo.png" alt="Alkawthar Drive Logo" class="logo-img">
-                </div>
-
-                <!-- TEXTE HERO -->
                 <div class="hero-text animated-fade-up">
                     <h1 data-i18n="hero_title">ALKawthar Drive</h1>
                     <h2 data-i18n="hero_subtitle">الكوثر للنقل الخاص</h2>
@@ -70,7 +67,6 @@
                                 data-i18n="btn_call">اتصل بنا</span></a>
                     </div>
                 </div>
-
             </div>
         </div>
     </header>
