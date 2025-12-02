@@ -1,342 +1,293 @@
-/* ============================================================
-   PREMIUM VTC IDF – SCRIPT FINAL ✅ 2025 (CORRIGÉ & OPTIMISÉ)
-============================================================ */
+import express from "express";
+import cors from "cors";
+import 'dotenv/config';
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from 'url';
+import FormData from 'form-data';
+import PDFDocument from 'pdfkit';
 
-// ✅ URL BACKEND (LOCAL POUR TEST, REMPLACER PAR URL PROD SI BESOIN)
-// ✅ URL BACKEND (IMPORTANT : REMPLACER PAR L'URL DE RENDER EN PRODUCTION)
-// Exemple : const BACKEND_URL = "https://votre-app-sur-render.com";
-const BACKEND_URL = "https://alkawthar-drive.onrender.com"; // ✅ URL PRODUCTION RENDER
+// ⚠️ DÉSACTIVER VÉRIFICATION SSL (POUR DEV LOCAL SEULEMENT SI ERREUR CERTIFICAT)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-// ===================== VARIABLES GLOBALES =====================
-let map, directionsService, directionsRenderer, iti;
-let mapLoaded = false;
-let paymentMethod = "Non défini";
-
-// ===================== RÉFÉRENCES DOM =====================
-const dom = {
-  start: document.getElementById("start"),
-  end: document.getElementById("end"),
-  telephone: document.getElementById("telephone"),
-  country: document.getElementById("country"),
-  calculate: document.getElementById("calculate"),
-  distance: document.getElementById("distance"),
-  duree: document.getElementById("duree"),
-  prixAffiche: document.getElementById("prix-affiche"),
-  reserver: document.getElementById("reserver"),
-  nom: document.getElementById("nom"),
-  email: document.getElementById("email"),
-  date: document.getElementById("date"),
-  map: document.getElementById("map")
-};
-
-// ✅ TAUX DE CHANGE FIXE (1 EUR = 220 DZD)
-const EXCHANGE_RATE = 220;
-
-function convertDZDtoEUR(amountDZD) {
-  return (amountDZD / EXCHANGE_RATE).toFixed(2);
+// CHECK ENV VARIABLES
+if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
+  console.error("❌ ERREUR CRITIQUE: TELEGRAM_BOT_TOKEN ou TELEGRAM_CHAT_ID manquant dans le fichier .env");
+  console.error("   Veuillez créer un fichier .env à la racine avec ces variables.");
+} else {
+  console.log("✅ Configuration Telegram chargée avec succès.");
 }
 
-// ===================== PAYS → CENTRAGE MAP =====================
-const countryCenters = {
-  // AFRIQUE
-  dz: { lat: 28.0339, lng: 1.6596, zoom: 5 }, // Algérie
-  tn: { lat: 33.8869, lng: 9.5375, zoom: 6 }, // Tunisie
-  ma: { lat: 31.7917, lng: -7.0926, zoom: 5 }, // Maroc
-  eg: { lat: 26.8206, lng: 30.8025, zoom: 5 }, // Égypte
-  ly: { lat: 26.3351, lng: 17.2283, zoom: 5 }, // Libye
-  sn: { lat: 14.4974, lng: -14.4524, zoom: 6 }, // Sénégal
-  ci: { lat: 7.54, lng: -5.5471, zoom: 6 }, // Côte d'Ivoire
-  za: { lat: -30.5595, lng: 22.9375, zoom: 5 }, // Afrique du Sud
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  // MOYEN-ORIENT
-  sa: { lat: 23.8859, lng: 45.0792, zoom: 5 }, // Arabie Saoudite
-  ae: { lat: 23.4241, lng: 53.8478, zoom: 6 }, // Émirats
-  qa: { lat: 25.3548, lng: 51.1839, zoom: 8 }, // Qatar
-  kw: { lat: 29.3117, lng: 47.4818, zoom: 7 }, // Koweït
-  jo: { lat: 30.5852, lng: 36.2384, zoom: 7 }, // Jordanie
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  // EUROPE
-  fr: { lat: 46.6033, lng: 1.8883, zoom: 5 }, // France
-  de: { lat: 51.1657, lng: 10.4515, zoom: 5 }, // Allemagne
-  es: { lat: 40.4637, lng: -3.7492, zoom: 5 }, // Espagne
-  it: { lat: 41.8719, lng: 12.5674, zoom: 5 }, // Italie
-  uk: { lat: 55.3781, lng: -3.4360, zoom: 5 }, // Royaume-Uni
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
-  // ASIE
-  tr: { lat: 38.9637, lng: 35.2433, zoom: 5 }, // Turquie
-  my: { lat: 4.2105, lng: 101.9758, zoom: 5 }, // Malaisie
-  id: { lat: -0.7893, lng: 113.9213, zoom: 4 } // Indonésie
-};
+// Multer config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname))
+  }
+})
 
-// ===================== INIT MAP =====================
-window.initMap = function () {
-  if (!dom.map) return;
+const upload = multer({ storage: storage });
 
-  // Si déjà chargée, on ne refait pas tout mais on resize
-  if (mapLoaded && map) {
-    google.maps.event.trigger(map, "resize");
-    return;
+// ✅ PAGE TEST
+app.get("/", (req, res) => {
+  res.send("✅ Premium VTC IDF Backend is running");
+});
+
+// ✅ TEST TELEGRAM
+app.get("/api/test-telegram", async (req, res) => {
+  const result = await sendTelegram("🔔 Test de notification depuis le serveur.");
+  res.json(result);
+});
+
+// ✅ SERVE PDF FILES FOR DOWNLOAD
+app.get("/api/download/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(uploadDir, filename);
+
+  if (fs.existsSync(filePath)) {
+    res.download(filePath, filename, (err) => {
+      if (err) {
+        console.error("Erreur téléchargement:", err);
+      }
+    });
+  } else {
+    res.status(404).send("Fichier non trouvé");
+  }
+});
+
+// ✅ FONCTION D'ENVOI TELEGRAM
+async function sendTelegram(message) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (!token || !chatId) {
+    console.error("⚠️ Telegram Token or Chat ID missing in .env");
+    return { ok: false, error: "Missing credentials" };
   }
 
-  const defaultCountry = dom.country?.value || "dz";
-  const centerData = countryCenters[defaultCountry] || countryCenters['dz'];
+  const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
   try {
-    map = new google.maps.Map(dom.map, {
-      center: { lat: centerData.lat, lng: centerData.lng },
-      zoom: centerData.zoom,
-      mapTypeId: "roadmap",
-      streetViewControl: false,
-      mapTypeControl: false,
-      fullscreenControl: false
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message
+      })
     });
-
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
-
-    setAutocomplete(defaultCountry);
-    mapLoaded = true;
-
-    // Force un resize après un court délai pour éviter le gris
-    setTimeout(() => {
-      google.maps.event.trigger(map, "resize");
-      map.setCenter({ lat: centerData.lat, lng: centerData.lng });
-    }, 500);
-
-  } catch (e) {
-    console.error("Erreur initMap:", e);
+    return await response.json();
+  } catch (error) {
+    console.error("Error sending Telegram message:", error);
+    return { ok: false, error: error.message || error.toString() };
   }
-};
-
-// ===================== AUTOCOMPLETE =====================
-function setAutocomplete(countryCode) {
-  if (!window.google || !window.google.maps || !window.google.maps.places) return;
-
-  const options = { componentRestrictions: { country: countryCode } };
-
-  // Nettoyer les anciens listeners si besoin (optionnel, ici on recrée)
-  if (dom.start) new google.maps.places.Autocomplete(dom.start, options);
-  if (dom.end) new google.maps.places.Autocomplete(dom.end, options);
 }
 
-// ===================== CHARGEMENT & EVENTS =====================
-window.addEventListener("load", () => {
-  // 1. Init Téléphone
-  if (dom.telephone) {
-    iti = window.intlTelInput(dom.telephone, {
-      initialCountry: dom.country?.value || "dz",
-      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/utils.js"
+// ✅ FONCTION D'ENVOI PHOTO TELEGRAM
+async function sendTelegramPhoto(caption, filePath) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const url = `https://api.telegram.org/bot${token}/sendPhoto`;
+
+  const formData = new FormData();
+  formData.append('chat_id', chatId);
+  formData.append('caption', caption);
+  formData.append('photo', fs.createReadStream(filePath));
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+      headers: formData.getHeaders()
     });
+    return await response.json();
+  } catch (error) {
+    console.error("Error sending Telegram photo:", error);
+    return { ok: false, error: error.message || error.toString() };
   }
-
-  // 2. Init Map (si Google Maps est chargé)
-  if (window.google && window.google.maps) {
-    initMap();
-  } else {
-    // Retry if script is slow
-    let attempts = 0;
-    const checkGoogle = setInterval(() => {
-      attempts++;
-      if (window.google && window.google.maps) {
-        initMap();
-        clearInterval(checkGoogle);
-      }
-      if (attempts > 20) clearInterval(checkGoogle); // Stop après 10s
-    }, 500);
-  }
-
-  // 3. Changement de pays
-  if (dom.country) {
-    dom.country.addEventListener("change", () => {
-      const c = dom.country.value;
-
-      // Update Map
-      if (countryCenters[c] && map) {
-        map.setCenter(countryCenters[c]);
-        map.setZoom(countryCenters[c].zoom);
-      }
-
-      // Update Phone
-      if (iti) iti.setCountry(c);
-
-      // Update Autocomplete
-      setAutocomplete(c);
-    });
-  }
-});
-
-// ===================== CALCUL PRIX =====================
-function computePrice(km) {
-  const PRIX_PAR_KM = 50; // Ajustez selon devise
-  const MIN = 500;
-  return Math.max(km * PRIX_PAR_KM, MIN).toFixed(0);
 }
 
-dom.calculate?.addEventListener("click", () => {
-  if (!dom.start.value || !dom.end.value) return alert("Veuillez entrer le départ et l'arrivée / يرجى إدخال نقطتي الانطلاق والوصول");
+// ✅ FONCTION D'ENVOI DOCUMENT TELEGRAM
+async function sendTelegramDocument(caption, filePath) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const url = `https://api.telegram.org/bot${token}/sendDocument`;
 
-  if (!directionsService) return alert("Erreur: Google Maps non chargé");
+  const formData = new FormData();
+  formData.append('chat_id', chatId);
+  formData.append('caption', caption);
+  formData.append('document', fs.createReadStream(filePath));
 
-  directionsService.route(
-    { origin: dom.start.value, destination: dom.end.value, travelMode: "DRIVING" },
-    (res, status) => {
-      if (status !== "OK") return alert("Intinéraire introuvable / لم يتم العثور على المسار");
-
-      directionsRenderer.setDirections(res);
-
-      const km = res.routes[0].legs[0].distance.value / 1000;
-      const time = res.routes[0].legs[0].duration.text;
-      const prix = computePrice(km);
-
-      dom.distance.textContent = km.toFixed(1) + " km";
-      dom.duree.textContent = time;
-      dom.prixAffiche.textContent = prix + " DA"; // Ou devise dynamique
-
-      // Notification Backend
-      fetch(`${BACKEND_URL}/api/calculate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ depart: dom.start.value, arrivee: dom.end.value, prix: prix + " DA" })
-      }).catch(err => console.error("Erreur backend:", err));
-    }
-  );
-});
-
-// ===================== RÉSERVATION =====================
-dom.reserver?.addEventListener("click", () => {
-  if (dom.prixAffiche.textContent === "—") return alert("Veuillez calculer le prix d'abord / احسب السعر أولاً");
-
-  if (paymentMethod === "PayPal") {
-    return alert("Veuillez utiliser le bouton PayPal ci-dessous pour payer / يرجى استخدام زر PayPal أدناه للدفع");
-  }
-
-  processReservation();
-});
-
-function processReservation() {
-  const data = {
-    nom: dom.nom.value,
-    email: dom.email.value,
-    telephone: dom.telephone.value,
-    depart: dom.start.value,
-    arrivee: dom.end.value,
-    prix: dom.prixAffiche.textContent,
-    payment: paymentMethod,
-    date: dom.date.value || "Non spécifiée",
-    passagers: document.getElementById("passagers").value
-  };
-
-  fetch(`${BACKEND_URL}/api/reservation`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-    .then(res => res.json())
-    .then(res => {
-      if (res.success) {
-        alert("✅ Réservation envoyée avec succès / تم إرسال الحجز بنجاح");
-        if (res.pdfUrl) {
-          // Create a temporary link to download the PDF
-          const link = document.createElement('a');
-          link.href = `${BACKEND_URL}${res.pdfUrl}`;
-          link.download = 'Reservation.pdf';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      } else {
-        alert("⚠️ Erreur lors de l'envoi / خطأ في الإرسال");
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      alert("❌ Erreur de connexion au serveur");
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+      headers: formData.getHeaders()
     });
+    return await response.json();
+  } catch (error) {
+    console.error("Error sending Telegram document:", error);
+    return { ok: false, error: error.message || error.toString() };
+  }
 }
 
-// ===================== GESTION PAIEMENT =====================
-const paymentButtons = document.querySelectorAll(".btn-payment");
-const paypalSection = document.getElementById("paypal-section");
+// ✅ GÉNÉRATION PDF RÉSERVATION
+function generateReservationPDF(data) {
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument();
+    const filename = `Reservation_${Date.now()}.pdf`;
+    const filePath = path.join(uploadDir, filename);
+    const stream = fs.createWriteStream(filePath);
 
-paymentButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    // Reset styles
-    paymentButtons.forEach(b => b.style.border = "none");
-    btn.style.border = "2px solid #fff";
+    doc.pipe(stream);
 
-    if (btn.id === "payer-paypal") {
-      paymentMethod = "PayPal";
-      paypalSection.style.display = "block";
-      renderPayPalButtons();
-    } else if (btn.id === "payer-stripe") {
-      paymentMethod = "Carte Edahabia / CIB";
-      paypalSection.style.display = "none";
-    } else {
-      paymentMethod = "Espèces";
-      paypalSection.style.display = "none";
-    }
+    // Header
+    doc.fontSize(20).text('ALKawthar Drive - Réservation', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(`Date: ${new Date().toLocaleString()}`, { align: 'right' });
+    doc.moveDown();
+
+    // Details
+    doc.fontSize(14).text('Détails du Client:', { underline: true });
+    doc.fontSize(12).text(`Nom: ${data.nom}`);
+    doc.text(`Email: ${data.email}`);
+    doc.text(`Téléphone: ${data.telephone}`);
+    doc.moveDown();
+
+    // Details Trajet
+    doc.fontSize(14).text('Détails du Trajet:', { underline: true });
+    doc.text(`Départ: ${data.depart}`);
+    doc.text(`Arrivée: ${data.arrivee}`);
+    doc.text(`Date Prévue: ${data.date}`);
+    doc.text(`Passagers: ${data.passagers || 'Non spécifié'}`);
+    doc.moveDown();
+
+    // Paiement
+    doc.fontSize(14).text('Paiement:', { underline: true });
+    doc.text(`Prix: ${data.prix}`);
+    doc.text(`Mode de paiement: ${data.payment}`);
+    doc.moveDown();
+
+    doc.fontSize(10).text('Merci de votre confiance. ALKawthar Drive.', { align: 'center', margin: 50 });
+
+    doc.end();
+
+    stream.on('finish', () => resolve({ filePath, filename }));
+    stream.on('error', (err) => reject(err));
   });
-});
-
-// ===================== PAYPAL =====================
-let paypalRendered = false;
-
-function renderPayPalButtons() {
-  if (paypalRendered) return;
-
-  // Nettoyer le conteneur au cas où
-  document.getElementById("paypal-button-container").innerHTML = "";
-
-  paypal.Buttons({
-    style: {
-      layout: 'vertical',
-      color: 'gold',
-      shape: 'rect',
-      label: 'paypal'
-    },
-    createOrder: function (data, actions) {
-      // Extraire le montant numérique (ex: "1500 DA" -> 1500)
-      const prixText = dom.prixAffiche.textContent.replace(" DA", "").trim();
-      const amountDZD = parseFloat(prixText) || 0;
-
-      // Conversion en EUR
-      const amountEUR = convertDZDtoEUR(amountDZD);
-
-      // Fallback si montant invalide (évite erreur PayPal)
-      const finalAmount = amountEUR > 0 ? amountEUR : "10.00";
-
-      console.log(`Montant: ${amountDZD} DA -> ${finalAmount} EUR`);
-
-      return actions.order.create({
-        purchase_units: [{
-          amount: {
-            value: finalAmount
-          }
-        }]
-      });
-    },
-    onApprove: function (data, actions) {
-      return actions.order.capture().then(function (details) {
-        alert('Transaction complétée par ' + details.payer.name.given_name);
-        // Appeler le backend pour enregistrer la réservation
-        processReservation();
-      });
-    },
-    onError: function (err) {
-      console.error('PayPal Error:', err);
-      alert("Erreur PayPal. Veuillez réessayer.");
-    }
-  }).render('#paypal-button-container');
-
-  paypalRendered = true;
 }
 
-// ===================== SWITCH MODE =====================
-window.switchMode = function (mode) {
-  if (mode === "chauffeur") {
-    window.location.href = "chauffeur.html";
-  } else {
-    window.location.href = "index.html";
+
+// ✅ NOTIFICATION APRÈS CLIC SUR "CALCULER"
+app.post("/api/calculate", async (req, res) => {
+  try {
+    const { depart, arrivee, prix } = req.body;
+
+    await sendTelegram(
+      `🧮 NOUVEAU CALCUL\n\n📍 Départ: ${depart}\n📍 Arrivée: ${arrivee}\n💰 Prix estimé: ${prix}`
+    );
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Erreur TELEGRAM calcul:", error);
+    res.status(500).json({ success: false });
   }
-};
+});
+
+// ✅ NOTIFICATION APRÈS CLIC SUR "RÉSERVER"
+app.post("/api/reservation", async (req, res) => {
+  try {
+    const { nom, email, telephone, depart, arrivee, date, prix, payment, passagers } = req.body;
+
+    // 1. Send Text Notification
+    await sendTelegram(
+      `✅ NOUVELLE RÉSERVATION\n\n👤 Nom: ${nom}\n📧 Email: ${email}\n📞 Téléphone: ${telephone}\n📍 Départ: ${depart}\n📍 Arrivée: ${arrivee}\n🕒 Date: ${date}\n👥 Passagers: ${passagers}\n💰 Prix: ${prix}\n💳 Paiement: ${payment}`
+    );
+
+    // 2. Generate PDF
+    const { filePath, filename } = await generateReservationPDF({ nom, email, telephone, depart, arrivee, date, prix, payment, passagers });
+
+    // 3. Send PDF via Telegram
+    await sendTelegramDocument("📄 Bon de Réservation", filePath);
+
+    // 4. Return success with download URL
+    res.json({
+      success: true,
+      pdfUrl: `/api/download/${filename}`
+    });
+
+  } catch (error) {
+    console.error("Erreur TELEGRAM réservation:", error);
+    res.status(500).json({ success: false });
+  }
+});
+
+// ✅ INSCRIPTION CHAUFFEUR
+app.post("/api/chauffeur", upload.fields([
+  { name: 'photo', maxCount: 1 },
+  { name: 'carteGrise', maxCount: 1 },
+  { name: 'assurance', maxCount: 1 },
+  { name: 'vehicule', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const { nom, telephone } = req.body;
+    const files = req.files;
+
+    await sendTelegram(
+      `🚖 NOUVELLE CANDIDATURE CHAUFFEUR\n\n👤 Nom: ${nom}\n📞 Téléphone: ${telephone}`
+    );
+
+    if (files['photo']) await sendTelegramPhoto('📷 Photo du chauffeur', files['photo'][0].path);
+    if (files['carteGrise']) await sendTelegramDocument('📄 Carte Grise', files['carteGrise'][0].path);
+    if (files['assurance']) await sendTelegramDocument('📄 Assurance', files['assurance'][0].path);
+    if (files['vehicule']) await sendTelegramPhoto('🚗 Véhicule', files['vehicule'][0].path);
+
+    // Cleanup uploaded files
+    for (const key in files) {
+      if (files[key] && files[key][0]) {
+        cleanupFile(files[key][0].path);
+      }
+    }
+
+    res.json({ success: true, message: "Candidature envoyée avec succès" });
+
+  } catch (error) {
+    console.error("Erreur inscription chauffeur:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ✅ FONCTION DE NETTOYAGE
+function cleanupFile(filePath) {
+  if (fs.existsSync(filePath)) {
+    try {
+      fs.unlinkSync(filePath);
+      console.log(`🗑️ Fichier temporaire supprimé: ${filePath}`);
+    } catch (err) {
+      console.error(`⚠️ Erreur suppression fichier ${filePath}:`, err);
+    }
+  }
+}
+
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => {
+  console.log("🚀 Server running on port", PORT);
+});
