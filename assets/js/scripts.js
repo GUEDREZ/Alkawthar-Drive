@@ -3,7 +3,9 @@
 ============================================================ */
 
 // ✅ URL BACKEND (LOCAL POUR TEST, REMPLACER PAR URL PROD SI BESOIN)
-const BACKEND_URL = "http://localhost:3000";
+// ✅ URL BACKEND (IMPORTANT : REMPLACER PAR L'URL DE RENDER EN PRODUCTION)
+// Exemple : const BACKEND_URL = "https://votre-app-sur-render.com";
+const BACKEND_URL = "https://alkawthar-drive.onrender.com"; // ✅ URL PRODUCTION RENDER
 
 // ===================== VARIABLES GLOBALES =====================
 let map, directionsService, directionsRenderer, iti;
@@ -26,6 +28,13 @@ const dom = {
   date: document.getElementById("date"),
   map: document.getElementById("map")
 };
+
+// ✅ TAUX DE CHANGE FIXE (1 EUR = 220 DZD)
+const EXCHANGE_RATE = 220;
+
+function convertDZDtoEUR(amountDZD) {
+  return (amountDZD / EXCHANGE_RATE).toFixed(2);
+}
 
 // ===================== PAYS → CENTRAGE MAP =====================
 const countryCenters = {
@@ -288,16 +297,21 @@ function renderPayPalButtons() {
     },
     createOrder: function (data, actions) {
       // Extraire le montant numérique (ex: "1500 DA" -> 1500)
-      // Note: PayPal requiert une devise supportée. DA (DZD) n'est pas supporté par défaut.
-      // On convertit en EUR pour l'exemple ou on utilise une devise supportée.
-      // Ici on met un montant fixe pour l'exemple ou on convertit.
-      const prixText = dom.prixAffiche.textContent;
-      const amount = parseFloat(prixText) || 10; // Fallback 10 EUR
+      const prixText = dom.prixAffiche.textContent.replace(" DA", "").trim();
+      const amountDZD = parseFloat(prixText) || 0;
+
+      // Conversion en EUR
+      const amountEUR = convertDZDtoEUR(amountDZD);
+
+      // Fallback si montant invalide (évite erreur PayPal)
+      const finalAmount = amountEUR > 0 ? amountEUR : "10.00";
+
+      console.log(`Montant: ${amountDZD} DA -> ${finalAmount} EUR`);
 
       return actions.order.create({
         purchase_units: [{
           amount: {
-            value: amount.toString()
+            value: finalAmount
           }
         }]
       });
