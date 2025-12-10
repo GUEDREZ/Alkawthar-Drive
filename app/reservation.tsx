@@ -20,7 +20,7 @@ import MapView, {
 
 import PolylineDecoder from "@mapbox/polyline";
 import * as Location from "expo-location";
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { io } from "socket.io-client";
 
@@ -146,9 +146,10 @@ export default function Reservation() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
+      <Stack.Screen options={{ headerShown: false }} />
       <StatusBar barStyle="light-content" />
 
       {/* HEADER PREMIUM */}
@@ -228,7 +229,7 @@ export default function Reservation() {
                 longitude: details.geometry.location.lng,
               });
             }}
-            styles={{ ...autoStyles, container: { flex: 0, zIndex: 10 } }}
+            styles={{ ...autoStyles, container: { flex: 0, zIndex: 10 }, listView: { maxHeight: 150 } }}
           />
 
           <Text style={styles.label}>Destination</Text>
@@ -246,7 +247,7 @@ export default function Reservation() {
                 longitude: details.geometry.location.lng,
               });
             }}
-            styles={{ ...autoStyles, container: { flex: 0, zIndex: 5 } }}
+            styles={{ ...autoStyles, container: { flex: 0, zIndex: 5 }, listView: { maxHeight: 150 } }}
           />
 
           <TouchableOpacity
